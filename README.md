@@ -27,6 +27,13 @@ There are issues on [issues in this project]()
 ## Branch Configuration
 master <- develop <- feature
 
+## Execute source file
+以下のコマンドによって, source fileをコンパイルする
+```
+$ gcc -framework GLUT -framework OpenGL fileName
+$ ./a.out
+```
+
 ## References
 + Elasticity Model: 
 + TransParency Model:
