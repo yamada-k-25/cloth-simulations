@@ -12,7 +12,7 @@
 #include <math.h>
 
 void display(void) { 
-
+glutSolidTeapot(0.5);
 }
 
 void idle(void)
