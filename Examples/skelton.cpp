@@ -11,13 +11,21 @@
 #include <GLUT/GLUT.h>
 #include <math.h>
 
-void display(void) { 
-glutSolidTeapot(0.5);
+void display(void) {
+    glColor3f(1.0, 0.5, 0.0); //描画対象の色を設定する
+    glBegin(GL_POLYGON); //　多角形平面の描画
+        glVertex3f(0.5, 0.5, 0.0);
+        glVertex3f(-0.5, 0.5, 0.0);
+        glVertex3f(-0.5, -0.5, 0.0);
+        glVertex3f(0.5, -0.5, 0.0);
+    glEnd();
+
+    glFlush();
 }
 
 void idle(void)
 {
- 
+    
 }
 
 void myKbd(unsigned char key, int x, int y) {
@@ -30,8 +38,14 @@ void myInit(char *progname) {
 
     glutInitWindowPosition(0, 0);
     glutInitWindowSize(width, height);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); //ダブルバッファの宣言
+    glutInitDisplayMode(GLUT_RGBA); //　GLUT_DOUBLE ダブルバッファの宣言の時は, back, frontを設定しないと描画されない
     glutCreateWindow(progname);
+
+    // glClearColor(0.0, 0.0, 0.0, 1.0);
+
+    // glMatrixMode(GL_PROJECTION);
+    // glLoadIdentity();
+    // glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
 }
 
 int main(int argc, char** argv) {
