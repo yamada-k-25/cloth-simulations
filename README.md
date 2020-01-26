@@ -9,7 +9,7 @@ cloth simulation using api,  OpenGL, C++
 + Simulate a cloth with elastic forces.
 
 ## My steps
-Tasks have a lot of separated small tasks in [Issues]() and [Project Board]().
+Tasks have a lot of separated small tasks in [Issues](https://github.com/yamada-k-25/cloth-simulations/issues) and [Project Board](https://github.com/yamada-k-25/cloth-simulations/projects/1).
 
 | Task | Description | Progress(%) | Deadline |
 ----  | --- | -----: | ----:
@@ -24,7 +24,7 @@ Tasks have a lot of separated small tasks in [Issues]() and [Project Board]().
 There are issues on [issues in this project]()
 
 ## Branch Configuration
-master <- develop <- feature
+master <-  feature
 
 ## Execute source file
 以下のコマンドによって, source fileをコンパイルする
