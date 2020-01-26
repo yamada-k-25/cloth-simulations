@@ -32,6 +32,11 @@ master <-  feature
 $ gcc -framework GLUT -framework OpenGL fileName
 $ ./a.out
 ```
+`Library/`以下のクラスを使っているソースをコンパイルする時はそれらを一緒にコンパイルする必要がある.
+```
+$ gcc -framework GLUT -framework OpenGL fileName1 Library/fileName2
+$ ./a.out
+```
 
 ## References
 + Elasticity Model: 
