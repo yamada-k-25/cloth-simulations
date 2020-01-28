@@ -27,6 +27,9 @@ static int DrawGroundGrid(int d, double x, double y, double h)
         glDisable(GL_LIGHTING);
     
         glColor3f(0,0.5,0);
+        // TODO: 
+        // ラインでの描画も残して置きたいので, 
+        // 別としてPOLYGONで描画するようにする
         glLineWidth(6.0);
         glBegin(GL_LINE_LOOP);
         glVertex3d(-x,  y, h);
@@ -37,6 +40,8 @@ static int DrawGroundGrid(int d, double x, double y, double h)
         glLineWidth(3.0);
         
         // x方向
+        // TODO: ここら辺の点の生成をコンストラクタで行う
+        // TODO: 構造体などで切り分ける
         float x0, x1, y0, y1;
         float deltaX, deltaY;
     
