@@ -1,5 +1,10 @@
 #include <GLUT/GLUT.h>
 #include <OpenGL/OpenGL.h>
+#include "Grid.h"
+#include <vector>
+#include <iostream>
+
+typedef std::vector<std::vector<Grid> > Grids;
 
 class GridSurface {
 public:
@@ -23,4 +28,5 @@ private:
     float y;
     float h;
     int d;
+    Grids grids; // Gridを２次元配列的な感じで表現する
 };
