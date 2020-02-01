@@ -11,7 +11,7 @@ GridSurface::GridSurface(float originX, float originY, float originH, int divide
     this->h = originH;
     this->d = divideNum;
     // TODO: 多分ここら辺が間違っているので, 修正する
-    this->grids = vector<vector<Grid> >(divideNum, vector<Grid>(divideNum));
+    this->grids = vector<vector<Grid> >(divideNum+1, vector<Grid>(divideNum+1));
     // this->grids = vector<vector<Grid> >(100, vector<Grid>(100));
     
 }
@@ -28,12 +28,12 @@ void GridSurface::Initialize() {
         deltaX = (2*x)/d;
         deltaY = (2*y)/d;  
 
-        for(int i = 0; i < d; ++i){
-            for(int j = 0; j < d; ++j) {
+        for(int i = 0; i <= d; ++i){
+            for(int j = 0; j <= d; ++j) {
                 // x0 = x0 + deltaX;
                 // y0 = y0 + deltaY;
-                grids[j][i].position.x = x0 + deltaX*(i+1);
-                grids[j][i].position.y = y0 + deltaY*(j+1);
+                grids[j][i].position.x = x0 + deltaX*i;
+                grids[j][i].position.y = y0 + deltaY*j;
             }
         }
     
@@ -60,8 +60,9 @@ void GridSurface::Draw(int drawingType) {
         glEnd();
         glLineWidth(3.0);
 
+        // TODO: ここのdrawingTypeをenumで書き換えたほうが良いかも
         switch(drawingType) {
-            case 1:
+            case 1: // draw vertexs
             for(int i = 0; i < d; ++i) {
                 for(int j = 0; j < d; ++j) {
                 glBegin(GL_POINTS);
@@ -71,12 +72,21 @@ void GridSurface::Draw(int drawingType) {
             }
             break;
 
-            case 2:
-
+            case 2: // draw wireframe 
             break;
 
-            case 3:
-
+            case 3: // draw surface
+                for(int i = 0; i < d; ++i) {
+                    for(int j = 0; j < d; ++j) {
+                        glColor3f(0,0.5,0);
+                        glBegin(GL_QUADS);
+                            glVertex3f(grids[i][j].position.x , grids[i][j].position.y, grids[i][j].position.z);
+                            glVertex3f(grids[i+1][j].position.x , grids[i+1][j].position.y, grids[i+1][j].position.z);
+                            glVertex3f(grids[i+1][j+1].position.x , grids[i+1][j+1].position.y, grids[i+1][j+1].position.z);
+                            glVertex3f(grids[i][j+1].position.x , grids[i][j+1].position.y, grids[i][j+1].position.z);
+                        glEnd();
+                    }
+                }
             break;
         }
         
