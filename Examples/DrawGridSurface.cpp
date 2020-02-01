@@ -25,7 +25,7 @@ void display(void) {
     GridSurface gridSurface(0.5, 0.5, 1, 10);
     gridSurface.Initialize();
     // printf("%d, %d, %d, %d", gridSurface.GetX(), gridSurface.GetY(), gridSurface.GetH(), gridSurface.DivideNum());
-    gridSurface.Draw(3);
+    gridSurface.Draw(2);
 
     glFlush();
 }

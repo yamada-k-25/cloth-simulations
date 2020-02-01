@@ -63,6 +63,27 @@ void GridSurface::Draw(int drawingType) {
             break;
 
             case 2: // draw wireframe 
+                for(int i = 0; i < d; ++i) {
+                    for(int j = 0; j < d; ++j) {
+                        glColor3f(0,0.5,0);
+                        glBegin(GL_LINES);
+                            glVertex3f(grids[i][j].position.x , grids[i][j].position.y, grids[i][j].position.z);
+                            glVertex3f(grids[i+1][j].position.x , grids[i+1][j].position.y, grids[i+1][j].position.z);
+                        glEnd();
+                        glBegin(GL_LINES);
+                            glVertex3f(grids[i+1][j].position.x , grids[i+1][j].position.y, grids[i+1][j].position.z);
+                            glVertex3f(grids[i+1][j+1].position.x , grids[i+1][j+1].position.y, grids[i+1][j+1].position.z);
+                        glEnd();
+                        glBegin(GL_LINES);
+                            glVertex3f(grids[i+1][j+1].position.x , grids[i+1][j+1].position.y, grids[i+1][j+1].position.z);
+                            glVertex3f(grids[i][j+1].position.x , grids[i][j+1].position.y, grids[i][j+1].position.z);
+                        glEnd();
+                        glBegin(GL_LINES);
+                            glVertex3f(grids[i][j+1].position.x , grids[i][j+1].position.y, grids[i][j+1].position.z);
+                            glVertex3f(grids[i][j].position.x , grids[i][j].position.y, grids[i][j].position.z);
+                        glEnd();
+                    }
+                }
             break;
 
             case 3: // draw surface
