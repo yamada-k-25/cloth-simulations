@@ -14,7 +14,7 @@ Tasks have a lot of separated small tasks in [Issues](https://github.com/yamada-
 | Task | Description | Progress(%) | Deadline |
 ----  | --- | -----: | ----:
 |1. Create a skelton codes |何も実装されていない描画コード| Completed| 1/31 |
-|2. Draw a surface|面だけを表示するプログラム|0| 1/31 |
+|2. Draw a surface|面だけを表示するプログラム| 50% | 1/31 |
 |3. Create a surface having cotorable points on its self||0| 2/15 |
 |4. Create Cloth Class with Elastic Force| 3を用いて, 弾性力を持つ布クラスを作成する | 0 | 2/15 |
 |5. Add Transparency to Cloth Class| 5を用いて, 光の透過性を布のクラスを作成する| 0| 2/15 |
@@ -30,6 +30,11 @@ master <-  feature
 以下のコマンドによって, source fileをコンパイルする
 ```
 $ gcc -framework GLUT -framework OpenGL fileName
+$ ./a.out
+```
+`Library/`以下のクラスを使っているソースをコンパイルする時はそれらを一緒にコンパイルする必要がある.
+```
+$ gcc -framework GLUT -framework OpenGL fileName1 Library/fileName2
 $ ./a.out
 ```
 
