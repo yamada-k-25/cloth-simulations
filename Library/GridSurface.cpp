@@ -10,10 +10,7 @@ GridSurface::GridSurface(float originX, float originY, float originH, int divide
     this->y = originY;
     this->h = originH;
     this->d = divideNum;
-    // TODO: 多分ここら辺が間違っているので, 修正する
     this->grids = vector<vector<Grid> >(divideNum+1, vector<Grid>(divideNum+1));
-    // this->grids = vector<vector<Grid> >(100, vector<Grid>(100));
-    
 }
 
 void GridSurface::Initialize() {
@@ -35,14 +32,6 @@ void GridSurface::Initialize() {
                 grids[j][i].position.x = x0 + deltaX*i;
                 grids[j][i].position.y = y0 + deltaY*j;
             }
-        }
-    
-        // y方向
-        x0 = -x; x1 = x;
-        deltaY = (2*y)/d;
-    
-        for(int i = 0; i < d; ++i){
-            y0 = y0 + deltaY;
         }
 }
 
@@ -90,36 +79,6 @@ void GridSurface::Draw(int drawingType) {
                 }
             break;
         }
-        
-        // x方向
-        float x0, x1, y0, y1;
-        float deltaX, deltaY;
-    
-        x0 = -x; x1 = -x;
-        y0 = -y; y1 = y;
-        deltaX = (2*x)/d;
-    
-        // for(int i = 0; i < d; ++i){
-        //     x0 = x0 + deltaX;
-        //     glBegin(GL_LINES);
-        //     glVertex3f(x0, y0, h);
-        //     glVertex3f(x0, y1, h);
-        //     glEnd();
-        // }
-    
-        // y方向
-        x0 = -x; x1 = x;
-        deltaY = (2*y)/d;
-    
-        // for(int i = 0; i < d; ++i){
-        //     y0 = y0 + deltaY;
-        //     glBegin(GL_LINES);
-        //     glVertex3f(x0, y0, h);
-        //     glVertex3f(x1, y0, h);
-        //     glEnd();
-        // }
-    
-        glLineWidth(1.0);
     glPopMatrix();
 }
 
