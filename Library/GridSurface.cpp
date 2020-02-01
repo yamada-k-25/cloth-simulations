@@ -49,16 +49,17 @@ void GridSurface::Initialize() {
 void GridSurface::Draw(int drawingType) {
     glPushMatrix();   
         glDisable(GL_LIGHTING);
-    
-        glColor3f(0,0.5,0);
-        glLineWidth(6.0);
-        glBegin(GL_LINE_LOOP);
-        glVertex3d(-x,  y, h);
-        glVertex3d( x,  y, h);  
-        glVertex3d( x, -y, h);
-        glVertex3d(-x, -y, h);
-        glEnd();
-        glLineWidth(3.0);
+
+        // 描画範囲の枠線の描画
+        // glColor3f(0,0.5,0);
+        // glLineWidth(6.0);
+        // glBegin(GL_LINE_LOOP);
+        // glVertex3d(-x,  y, h);
+        // glVertex3d( x,  y, h);  
+        // glVertex3d( x, -y, h);
+        // glVertex3d(-x, -y, h);
+        // glEnd();
+        // glLineWidth(3.0);
 
         // TODO: ここのdrawingTypeをenumで書き換えたほうが良いかも
         switch(drawingType) {
