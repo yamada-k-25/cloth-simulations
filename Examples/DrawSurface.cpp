@@ -65,16 +65,15 @@ static int DrawGroundGrid(int d, double x, double y, double h)
 void display(void) { 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     DrawGroundGrid(10, 100, 100, 100);
-    glutSolidTeapot(0.5);
+    glutSwapBuffers();
 }
 
 void idle(void)
 {
- 
+    gridSurface.TestUpdate();
 }
 
 void myKbd(unsigned char key, int x, int y) {
-
 }
 
 void myInit(char *progname) {
@@ -91,8 +90,8 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     myInit(argv[0]);
     glutDisplayFunc(display);
-    // イベントがない場合には以下のidleが実行される
-    // glutIdleFunc(idle);
+    // Animations
+    glutIdleFunc(idle);
     glutMainLoop();
     return 0;
 }

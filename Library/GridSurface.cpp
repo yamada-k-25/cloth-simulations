@@ -10,6 +10,9 @@ GridSurface::GridSurface(float originX, float originY, float originH, int divide
     this->y = originY;
     this->h = originH;
     this->d = divideNum;
+    // Gridの点の位置座標の間隔
+    this->deltaX = (2*originX)/divideNum;
+    this->deltaY = (2*originY)/divideNum;  
     this->grids = vector<vector<Grid> >(divideNum+1, vector<Grid>(divideNum+1));
 }
 
@@ -17,13 +20,9 @@ void GridSurface::Initialize() {
     // initialize grids
         // x方向
         float x0, x1, y0, y1;
-        float deltaX, deltaY;
         // x0, x1, y0, y1がそれぞれ何を表しているのか考える
         x0 = -x; x1 = -x;
         y0 = -y; y1 = y;
-        // Gridの点の位置座標の間隔
-        deltaX = (2*x)/d;
-        deltaY = (2*y)/d;  
 
         for(int i = 0; i <= d; ++i){
             for(int j = 0; j <= d; ++j) {
@@ -105,14 +104,41 @@ void GridSurface::Draw(int drawingType) {
 
 /// 毎フレームごとに
 void GridSurface::Update() {
-
+    // WindowForce
+    TestUpdate();
 }
 
-// protected methods
+// ============ Protected Methods ============
+
 void GridSurface::EularMethod() {
 
 }
 
-void GridSurface::UpdateForce() {
+void GridSurface::TestUpdate() {
+    // X方向に点が伸びるように実装してみる
+    float deltaX = this->deltaX/30;
+    for(int i=0; i<=d; ++i) {
+        for(int j=0; j<=d; ++j) {
+            grids[i][j].position.x += deltaX;
+        }
+    }
+}
+
+void GridSurface::UpdateExternalForces() {
+    // 各頂点を外力によって位置を更新する
+    for(int i = 0; i <= d; ++i) {
+        for(int j = 0; j <= d; ++j) {
+            // 速度を更新する
+            // 重力
+            
+        }
+    }
+}
+
+void GridSurface::UpdateInternalForces() {
+
+}
+
+void GridSurface::UpdateCollision() { 
 
 }

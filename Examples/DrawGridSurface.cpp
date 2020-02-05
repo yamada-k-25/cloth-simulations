@@ -5,6 +5,8 @@
 #include <math.h>
 #include "../Library/GridSurface.h"
 
+GridSurface gridSurface(0.5, 0.5, 1, 10);
+
 /*
 以下を参考にさせていただいてます.
 OpenGL - サンプルコード
@@ -12,7 +14,8 @@ OpenGL - サンプルコード
 */
 void idle(void)
 {
- 
+    gridSurface.Update();
+    glutPostRedisplay();
 }
 
 void myKbd(unsigned char key, int x, int y) {
@@ -22,12 +25,10 @@ void myKbd(unsigned char key, int x, int y) {
 void display(void) { 
     glClear(GL_COLOR_BUFFER_BIT);
     // DrawGroundGrid(10, 1, 1, 1);
-    GridSurface gridSurface(0.5, 0.5, 1, 10);
-    gridSurface.Initialize();
     // printf("%d, %d, %d, %d", gridSurface.GetX(), gridSurface.GetY(), gridSurface.GetH(), gridSurface.DivideNum());
-    gridSurface.Draw(2);
+    gridSurface.Draw(1);
 
-    glFlush();
+    glutSwapBuffers();
 }
 
 void myInit(char *progname) {
@@ -36,10 +37,12 @@ void myInit(char *progname) {
 
     glutInitWindowPosition(0, 0);
     glutInitWindowSize(width, height);
-    glutInitDisplayMode( GLUT_RGBA); //ダブルバッファの宣言
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); //ダブルバッファの宣言
     glutCreateWindow(progname);
 
     glClearColor(0.0, 0.0, 0.0, 1.0);
+    
+    gridSurface.Initialize();
 }
 
 int main(int argc, char** argv) {
