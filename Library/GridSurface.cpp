@@ -6,38 +6,25 @@
 #include "AsuraVector.h"
 using namespace std;
 
-GridSurface::GridSurface(float originX, float originY, float originH, int divideNum) {
+GridSurface::GridSurface(float originX, float originY, float originH, int divideNum, StringType stringType = StringType::none) {
     this->x = originX;
     this->y = originY;
     this->h = originH;
     this->d = divideNum;
+    this->stringType = stringType; // ここで布全体のstringTypeが決定される
     // Gridの点の位置座標の間隔
     this->deltaX = (2*originX)/divideNum;
     this->deltaY = (2*originY)/divideNum;  
     this->grids = vector<vector<Grid> >(divideNum+1, vector<Grid>(divideNum+1));
+    // ２点間の組み合わせ総数
+    // TODO: 実際には、全ての組み合わせを取る必要はないので、最適化の余地あり
+    this->constraints = vector<ClothConstraint>((divideNum*divideNum)*((divideNum*divideNum)-1)/2);
 }
 
 void GridSurface::Initialize() {
     // initialize grids
-        // x方向
-        float x0, x1, y0, y1;
-        // x0, x1, y0, y1がそれぞれ何を表しているのか考える
-        x0 = -x; x1 = -x;
-        y0 = -y; y1 = y;
-
-        for(int i = 0; i <= d; ++i){
-            for(int j = 0; j <= d; ++j) {
-                // x0 = x0 + deltaX;
-                // y0 = y0 + deltaY;
-                grids[j][i].position.x = x0 + deltaX*i;
-                grids[j][i].position.y = y0 + deltaY*j;
-                // TODO: ここは、もっと３次元的な位置で初期化できるようにする必要がある
-                grids[j][i].position.z = this->h;
-                grids[i][j].velocity = Asura::vector3d(0.0f, 0.0f, 0.0f);
-                grids[i][j].force = Asura::vector3d(0.0f, 0.0f, 0.0f);
-
-            }
-        }
+    InitializeGrids();
+    InitializeClothConstraints();
 }
 
 void GridSurface::Draw(int drawingType) {
@@ -108,14 +95,50 @@ void GridSurface::Draw(int drawingType) {
     glPopMatrix();
 }
 
-/// 毎フレームごとに
 void GridSurface::Update() {
     // WindowForce
     // TestUpdate();
     UpdateExternalForces();
 }
 
-// ============ Protected Methods ============
+void GridSurface::SetAllGridStringType(StringType stringType) {
+    vector<ClothConstraint>::iterator ite = this->constraints.begin();
+    for(ite; ite != this->constraints.end(); ++ite) {
+        ite->stringType = stringType;
+    }
+}
+
+
+// ============ Protected Methods ============ 
+
+// ============= Initialize Methods ==========
+
+void GridSurface::InitializeGrids() {
+    // x方向
+    float x0, x1, y0, y1;
+    // x0, x1, y0, y1がそれぞれ何を表しているのか考える
+    x0 = -x; x1 = -x;
+    y0 = -y; y1 = y;
+
+    for(int i = 0; i <= d; ++i){
+        for(int j = 0; j <= d; ++j) {
+            // x0 = x0 + deltaX;
+            // y0 = y0 + deltaY;
+            grids[j][i].position.x = x0 + deltaX*i;
+            grids[j][i].position.y = y0 + deltaY*j;
+            // TODO: ここは、もっと３次元的な位置で初期化できるようにする必要がある
+            grids[j][i].position.z = this->h;
+            grids[i][j].velocity = Asura::vector3d(0.0f, 0.0f, 0.0f);
+            grids[i][j].force = Asura::vector3d(0.0f, 0.0f, 0.0f);
+        }
+    }
+}
+
+void GridSurface::InitializeClothConstraints() {
+    // stringTypeによって、どんな布にするのか決定する
+    SetAllGridStringType(stringType);
+}
+
 
 void GridSurface::EularMethod() {
 
@@ -145,7 +168,7 @@ void GridSurface::UpdateExternalForces() {
 }
 
 void GridSurface::UpdateInternalForces() {
-
+    // TODO: 布の質点同士の関係による弾性力更新など
 }
 
 void GridSurface::UpdateCollision() { 

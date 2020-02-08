@@ -5,7 +5,7 @@
 #include <math.h>
 #include "../Library/GridSurface.h"
 
-GridSurface gridSurface(0.5, 0.5, -1, 10);
+GridSurface gridSurface(0.5, 0.5, -1, 10, StringType::fixed);
 
 /*
 以下を参考にさせていただいてます.
