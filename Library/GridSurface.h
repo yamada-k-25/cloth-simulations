@@ -49,8 +49,6 @@ private: // このクラス内でのみ参照できる
     float deltaY; // interval of division y
     Grids grids; // Gridを２次元配列的な感じで表現する
 
-    // constraints of External forces 
-    const float gravity = 9.8;
 protected: // 継承クラスからの参照を許可する
     void EularMethod();
     void TestUpdate(); // Animationができるか確認するために, 点を動かすをx軸方向に動かす

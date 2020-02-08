@@ -5,7 +5,7 @@
 #include <math.h>
 #include "../Library/GridSurface.h"
 
-GridSurface gridSurface(0.5, 0.5, 1, 10);
+GridSurface gridSurface(0.5, 0.5, -1, 10);
 
 /*
 以下を参考にさせていただいてます.
@@ -26,7 +26,7 @@ void display(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     // DrawGroundGrid(10, 1, 1, 1);
     // printf("%d, %d, %d, %d", gridSurface.GetX(), gridSurface.GetY(), gridSurface.GetH(), gridSurface.DivideNum());
-    gridSurface.Draw(1);
+    gridSurface.Draw(2);
 
     glutSwapBuffers();
 }

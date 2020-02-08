@@ -2,6 +2,7 @@
 #include <GLUT/GLUT.h>
 #include <OpenGL/OpenGL.h>
 #include <vector>
+#include "Constants.h"
 #include "AsuraVector.h"
 using namespace std;
 
@@ -30,6 +31,11 @@ void GridSurface::Initialize() {
                 // y0 = y0 + deltaY;
                 grids[j][i].position.x = x0 + deltaX*i;
                 grids[j][i].position.y = y0 + deltaY*j;
+                // TODO: ここは、もっと３次元的な位置で初期化できるようにする必要がある
+                grids[j][i].position.z = this->h;
+                grids[i][j].velocity = Asura::vector3d(0.0f, 0.0f, 0.0f);
+                grids[i][j].force = Asura::vector3d(0.0f, 0.0f, 0.0f);
+
             }
         }
 }
@@ -105,7 +111,8 @@ void GridSurface::Draw(int drawingType) {
 /// 毎フレームごとに
 void GridSurface::Update() {
     // WindowForce
-    TestUpdate();
+    // TestUpdate();
+    UpdateExternalForces();
 }
 
 // ============ Protected Methods ============
@@ -128,9 +135,11 @@ void GridSurface::UpdateExternalForces() {
     // 各頂点を外力によって位置を更新する
     for(int i = 0; i <= d; ++i) {
         for(int j = 0; j <= d; ++j) {
-            // 速度を更新する
-            // 重力
-            
+            this->grids[i][j].velocity.y += GRAVITY;
+            // TODO: 実際にはここの行はdeltaTimeを使う必要がありそう
+            // TODO: gires.forcesをつかって弾性力などを実装する必要がありそう
+            this->grids[i][j].position.y -= this->grids[i][j].velocity.y;
+
         }
     }
 }
