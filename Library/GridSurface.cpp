@@ -137,6 +137,15 @@ void GridSurface::InitializeGrids() {
 void GridSurface::InitializeClothConstraints() {
     // stringTypeによって、どんな布にするのか決定する
     SetAllGridStringType(stringType);
+    // initialize strech
+    // 平面座標系において、縦横に隣り合う点はStreachである
+
+    // initialize shear
+    // 平面座標系において、斜めに隣り合う点はshearである
+
+    // initialize bending
+    // 平面座標系において、点を１つ飛ばして縦横に隣り合う点はbendingである
+
 }
 
 
