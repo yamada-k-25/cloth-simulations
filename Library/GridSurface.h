@@ -1,3 +1,7 @@
+#ifndef INCLUDE_GRIDSURFACE
+#define INCLUDE_GRIDSURFACE 
+
+
 #include <vector>
 #include <iostream>
 #include "AsuraVector.h"
@@ -48,3 +52,5 @@ protected: // 継承クラスからの参照を許可する
     void UpdateInternalForces(); // 内部のバネによる位置の制約による修正
     void UpdateCollision(); // 衝突判定による位置の修正
 };
+
+#endif

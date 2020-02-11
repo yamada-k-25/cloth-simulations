@@ -22,4 +22,12 @@ struct ClothConstraint {
         rest = 0.0;
         stringType = StringType::none;
     }
+
+    Grid GetGrid1() {
+        return grid1;
+    }
+
+    Grid GetGrid2() {
+        return grid2;
+    }
 };
