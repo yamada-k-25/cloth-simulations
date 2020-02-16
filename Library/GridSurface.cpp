@@ -4,27 +4,30 @@
 #include <vector>
 #include "Constants.h"
 #include "AsuraVector.h"
+#include <cmath>
 using namespace std;
 
-GridSurface::GridSurface(float originX, float originY, float originH, int divideNum, StringType stringType = StringType::none) {
+GridSurface::GridSurface(float originX, float originY, float originH, int divideNum, float rest, StringType stringType = StringType::none) {
     this->x = originX;
     this->y = originY;
     this->h = originH;
     this->d = divideNum;
     this->stringType = stringType; // ここで布全体のstringTypeが決定される
+    // TODO: あとで全ての点から計算する
+    this->rest = rest;
     // Gridの点の位置座標の間隔
     this->deltaX = (2*originX)/divideNum;
     this->deltaY = (2*originY)/divideNum;  
     this->grids = vector<vector<Grid> >(divideNum+1, vector<Grid>(divideNum+1));
     // ２点間の組み合わせ総数
     // TODO: 実際には、全ての組み合わせを取る必要はないので、最適化の余地あり
-    this->constraints = vector<ClothConstraint>((divideNum*divideNum)*((divideNum*divideNum)-1)/2);
+    this->constraints = vector<ClothConstraint>(0);
 }
 
 void GridSurface::Initialize() {
     // initialize grids
     InitializeGrids();
-    InitializeClothConstraints();
+    InitializeClothConstraints(rest);
 }
 
 void GridSurface::Draw(int drawingType) {
@@ -96,9 +99,54 @@ void GridSurface::Draw(int drawingType) {
 }
 
 void GridSurface::Update() {
-    // WindowForce
     // TestUpdate();
-    UpdateExternalForces();
+    // forceを0に戻す
+    for(int i = 0; i <= d; ++i) {
+        for(int j = 0; j <= d; ++j) {
+            // grids[i][j].force = Asura::vector3d(0.0f, 0.0f, 0.0f);
+        }
+    }
+
+    // ===== Update Forces Phase ======
+    // 重力
+    UpdateGravityForce();
+    // 風
+    float r1 = counter / 70.0;
+    float r2 = counter / 25.0;
+    Asura::vector3d windowForce(0.0001f, 0.0001f, 0.0005f);
+    for(int i = 0; i <= d; ++i) {
+        for(int j = 0; j <=d; ++j) {
+            if(!grids[i][j].isFixed) grids[i][j].force += windowForce * (sin(r1) * sin(r2)*0.5 + 1.0);
+        }
+    }
+
+    //
+    UpdateSpringForces();
+
+    // 空気抵抗を計算をするために先に速度だけを計算する
+    for(int i = 0; i <= d; ++i) {
+        for(int j = 0; j <= d; ++j) {
+            grids[i][j].velocity = grids[i][j].force / grids[i][j].mass;
+        }
+    }
+
+    // 空気抵抗は最後に計算する
+    // 空気抵抗
+    const float damping = 0.01f;
+    for(int i = 0; i <= d; ++i) { 
+        for(int j = 0; j <= d; ++j) { 
+            grids[i][j].force -= damping * grids[i][j].velocity;
+        }
+    }
+
+    // 最後に加速度、速度、位置を更新する
+    for(int i = 0; i <= d; ++i) {
+        for(int j = 0; j <= d; ++j) {
+            grids[i][j].accelaration = grids[i][j].force / grids[i][j].mass;
+            grids[i][j].velocity += grids[i][j].accelaration * dt;
+            grids[i][j].position += grids[i][j].velocity * dt;
+        }
+    }
 }
 
 void GridSurface::SetAllGridStringType(StringType stringType) {
@@ -124,19 +172,86 @@ void GridSurface::InitializeGrids() {
         for(int j = 0; j <= d; ++j) {
             // x0 = x0 + deltaX;
             // y0 = y0 + deltaY;
-            grids[j][i].position.x = x0 + deltaX*i;
-            grids[j][i].position.y = y0 + deltaY*j;
-            // TODO: ここは、もっと３次元的な位置で初期化できるようにする必要がある
-            grids[j][i].position.z = this->h;
-            grids[i][j].velocity = Asura::vector3d(0.0f, 0.0f, 0.0f);
-            grids[i][j].force = Asura::vector3d(0.0f, 0.0f, 0.0f);
+            if(!grids[j][i].isFixed) {
+                grids[j][i].position.x = x0 + deltaX*i;
+                grids[j][i].position.y = y0 + deltaY*j;
+                // TODO: ここは、もっと３次元的な位置で初期化できるようにする必要がある
+                grids[j][i].position.z = this->h;
+                grids[i][j].velocity = Asura::vector3d(0.0f, 0.0f, 0.0f);
+                grids[i][j].force = Asura::vector3d(0.0f, 0.0f, 0.0f);
+            }
         }
     }
 }
 
-void GridSurface::InitializeClothConstraints() {
+void GridSurface::InitializeClothConstraints(float rest) {
     // stringTypeによって、どんな布にするのか決定する
     SetAllGridStringType(stringType);
+    // TODO: 最終的には、分けるがとりあえずすべての実装をここにする
+    // それぞれの接続によって加える力が違う
+    // Strech > Shearing > Bendingの順になるように制御する
+    // const float strech_rest = 
+    // const float shearing_rest = 
+    // const float bending_rest = 
+    //　接続の種類に対して、バネ定数をかえる　
+    const float streach_Ks = 0.07f;
+    const float shearing_Ks = 0.02f;
+    const float bending_Ks = 0.01;
+
+
+    // Strech: 横
+    for(int h = 0; h <= d; ++h) {
+        for(int w = 0; w < d; ++w) {
+            ClothConstraint constraint = ClothConstraint(&grids[h][w], &grids[h][w+1], rest, streach_Ks);
+            constraints.push_back(constraint);
+        }
+    }
+
+    // Strech: 縦
+    for(int h = 0; h < d; ++h) {
+        for(int w = 0; w <= d; ++w) {
+            ClothConstraint constraint = ClothConstraint(&grids[h][w], &grids[h+1][w], rest, streach_Ks);
+            constraints.push_back(constraint);
+        }
+    }
+
+    // Shearing: 斜めと接続する
+    // // 右肩下がりを接続する
+    for(int h = 0; h+1 <= d; ++h) {
+        for(int w = 0; w+1 <= d; ++w) {
+            ClothConstraint constraint = ClothConstraint(&grids[h][w], &grids[h+1][w+1], rest*pow(2,1/2), shearing_Ks);
+            constraints.push_back(constraint);
+        }
+    }
+
+    // // 右肩上がりを接続する
+    for(int h = 1; h <= d; ++h) {
+        for(int w = 0; w+1 <= d; ++w) {
+            ClothConstraint constraint = ClothConstraint(&grids[h][w], &grids[h-1][w+1], rest*pow(2,1/2), shearing_Ks);
+            constraints.push_back(constraint);
+        }
+    }
+
+    // Bending: 縮む力 注目点の+2の４近傍と接続する
+    // 横を１つ飛ばしで接続する
+    for(int h = 0; h+2 <= d; ++h) {
+        for(int w = 0; w < d; ++w) {
+            ClothConstraint constraint = ClothConstraint(&grids[h][w], &grids[h+2][w], rest*2, bending_Ks);
+            constraints.push_back(constraint);
+        }
+    }
+
+    // 盾を１つ飛ばしで接続する
+    for(int h = 0; h < d; ++h) {
+        for(int w = 0; w+2 <= d; ++w) {
+            ClothConstraint constraint = ClothConstraint(&grids[h][w], &grids[h][w+2], rest*2, bending_Ks);
+            constraints.push_back(constraint);
+        }
+    }
+
+
+    // Shear: 斜め
+
     // initialize strech
     // 平面座標系において、縦横に隣り合う点はStreachである
 
@@ -163,15 +278,13 @@ void GridSurface::TestUpdate() {
     }
 }
 
-void GridSurface::UpdateExternalForces() {
+void GridSurface::UpdateGravityForce() {
     // 各頂点を外力によって位置を更新する
     for(int i = 0; i <= d; ++i) {
         for(int j = 0; j <= d; ++j) {
-            this->grids[i][j].velocity.y += GRAVITY;
-            // TODO: 実際にはここの行はdeltaTimeを使う必要がありそう
-            // TODO: gires.forcesをつかって弾性力などを実装する必要がありそう
-            this->grids[i][j].position.y -= this->grids[i][j].velocity.y;
-
+            if(!this->grids[i][j].isFixed) {
+                this->grids[i][j].force += Asura::vector3d(0.0f, -GRAVITY * this->grids[i][j].mass, 0.0f);
+            }
         }
     }
 }
@@ -180,6 +293,59 @@ void GridSurface::UpdateInternalForces() {
     // TODO: 布の質点同士の関係による弾性力更新など
 }
 
+// TODO: 物体との衝突判定を実装するが他のオブジェクトにも汎用的に使えるようにしたい
 void GridSurface::UpdateCollision() { 
 
+}
+
+// 縦横の４近傍の弾性力を計算してプロパティを更新する
+void GridSurface::UpdateStreach() {
+}
+
+// 
+void GridSurface::UpdateShear() { 
+
+}
+
+void GridSurface::UpdateBending() { 
+
+}
+
+// 布の物理特性によって質点のプロパティを更新する
+void GridSurface::UpdateSpringForces() {
+
+    // 一度各点の力を０に初期化する必要がある
+        // TODO: このfor文での参照は危険かも
+    // Springを参照して全ての質点の力を更新する
+    vector<ClothConstraint>::iterator ite = constraints.begin();
+    for(ite; ite != constraints.end(); ++ite) {
+        // バネを取得する
+        // i番目のバネの自然長と
+        // 現在の長さの差分を求める
+        Asura::vector3d pointSub = ite->grid1->position - ite->grid2->position;
+        float lenSub = pointSub.Length() - ite->rest;
+        // 力の向きを考慮して、バネ力を求める
+        pointSub.Normalize();
+        Asura::vector3d force = -1 * ite->Ks * lenSub * pointSub;
+        // 両端の質点に対して、力ベクトルを求める
+        // TODO: gridはポインタで表現されているので、自動的に値が更新される
+        if(!ite->grid1->isFixed) {
+            ite->grid1->force += force;
+            // ite->grid1->accelaration = ite->grid1->force / ite->grid1->mass;
+            // ite->grid1->velocity += ite->grid1->accelaration * dt;
+            // ite->grid1->position += ite->grid1->velocity * dt;
+        }
+
+        if(!ite->grid2->isFixed) {
+            ite->grid2->force += -1 * force;
+            // ite->grid2->accelaration = ite->grid2->force / ite->grid2->mass;
+            // ite->grid2->velocity += ite->grid2->accelaration * dt;
+            // ite->grid2->position += ite->grid2->velocity * dt;
+        }
+    }
+
+    // TODO: 最終的には、３つの力を合成することで実装したい
+    GridSurface::UpdateStreach();
+    GridSurface::UpdateShear();
+    GridSurface::UpdateBending();
 }

@@ -10,24 +10,28 @@ enum StringType{
 };
 
 struct ClothConstraint {
-    Grid grid1;
-    Grid grid2;
+    Grid *grid1;
+    Grid *grid2;
     float rest; // 質点間のバネの自然長
     StringType stringType;
+    float Ks = 1.0f;
 
     // Initialize
     ClothConstraint() {
-        grid1 = Grid();
-        grid2 = Grid();
+        // TODO: メモリを無駄に消費している？
+        Grid grid1 = Grid();
+        Grid grid2 = Grid();
+        this->grid1 = &grid1;
+        this->grid2 = &grid2;
         rest = 0.0;
         stringType = StringType::none;
     }
 
-    Grid GetGrid1() {
-        return grid1;
-    }
-
-    Grid GetGrid2() {
-        return grid2;
+    // TODO: 参照渡しにしたい
+    ClothConstraint(Grid *grid1, Grid *grid2, float rest, float Ks) {
+        this->grid1 = grid1;
+        this->grid2 = grid2;
+        this->rest = rest;
+        this->Ks = Ks;
     }
 };

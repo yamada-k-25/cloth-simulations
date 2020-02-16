@@ -27,7 +27,7 @@ typedef vector<ClothConstraint> ClothConstraints;
 const double mass = 4.0;
 const double gravity = 9.80665;
 const double k = 1.0f;
-const double natural_length = 0.6f;
+const double natural_length = 0.01f;
 const double first_accel = gravity;
 const double first_velocity = 10.0;
 const double first_position = 10.0;
@@ -42,6 +42,8 @@ Sphere sphere2(rad, mass, vector3d(0.1f, 0.0f, 0.0f), vector3d(0.0f, 0.0f, 0.0f)
 Sphere sphere3(rad, mass, vector3d(0.2f, 0.0f, 0.0f), vector3d(0.0f, 0.0f, 0.0f), vector3d(0.0f, 0.0f, 0.0f));
 
 // Gridsを初期化する。
+Grid grid1();
+Grid grid2();
 // Gridの位置を更新する
 // Girdを描画する
 
@@ -108,7 +110,7 @@ int main(int argc, char** argv) {
 void UpdateConstraints(ClothConstraints clothConstraints) {
     vector<ClothConstraint>::iterator ite = clothConstraints.begin();
     for(ite; ite != clothConstraints.end(); ++ite) {
-        ite->grid1.EulerMethod();
-        ite->grid2.EulerMethod();
+        ite->grid1.UpdateBySpring(k, natural_length, ite->grid2);
+        ite->grid2.UpdateBySpring(k, natural_length, ite->grid1);
     }
 }
