@@ -46,17 +46,29 @@ void makeImage(void)
 			image[i][j][0] = (unsigned char) bitmap1[i][j];
         	image[i][j][1] = (unsigned char) bitmap1[i][j];
 			image[i][j][2] = (unsigned char) bitmap1[i][j];
-        	image[i][j][3] = (unsigned char) 50;
+        	image[i][j][3] = (unsigned char) 255 - bitmap1[i][j];
      	}
 	}
 }
 
 void display(void) {
-
+    // glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
     glEnable(GL_TEXTURE_2D);
+    // glDepthMask(GL_FALSE);
+	// glEnable( GL_DEPTH_TEST );
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glColor3f(1.0, 0.5, 0.0); //描画対象の色を設定する
+    glColor4f(0.0, 0.5, 0.0, 0.8); //描画対象の色を設定する
+    glBegin(GL_POLYGON); //　多角形平面の描画
+        glTexCoord2d(0.0,0.0); glVertex3f(0.1, 0.1, -1.0);
+        glTexCoord2d(0.0,5.0); glVertex3f(-0.1, 0.1, -1.0);
+        glTexCoord2d(5.0,5.0); glVertex3f(-0.1, -0.1, -1.0);
+        glTexCoord2d(5.0,0.0); glVertex3f(0.1, -0.1, -1.0);
+    glEnd();
+
+    glColor4f(1.0, 0.5, 0.0, 0.4); //描画対象の色を設定する
     glBegin(GL_POLYGON); //　多角形平面の描画
         glTexCoord2d(0.0,0.0); glVertex3f(0.5, 0.5, 0.0);
         glTexCoord2d(0.0,5.0); glVertex3f(-0.5, 0.5, 0.0);
@@ -64,6 +76,7 @@ void display(void) {
         glTexCoord2d(5.0,0.0); glVertex3f(0.5, -0.5, 0.0);
     glEnd();
 
+    glDisable(GL_TEXTURE_2D);
     glFlush();
 }
 
