@@ -2,3 +2,5 @@
 *.o
 *.vscode
 *.h.gch
+/Examples/cg3d_ex
+/Examples/cg3d
