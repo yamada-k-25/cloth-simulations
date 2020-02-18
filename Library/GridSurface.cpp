@@ -94,6 +94,25 @@ void GridSurface::Draw(int drawingType) {
                     }
                 }
             break;
+
+            case 4: // Grid Surfafe with Texture 
+                for(int i = 0; i < d; ++i) {
+                    for(int j = 0; j < d; ++j) {
+                        glEnable(GL_BLEND);
+                        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+                        glEnable(GL_TEXTURE_2D);
+                        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                        glColor4f(0,0.5,0, 0.5);
+                        glBegin(GL_QUADS);
+                            glVertex3f(grids[i][j].position.x , grids[i][j].position.y, grids[i][j].position.z);
+                            glVertex3f(grids[i+1][j].position.x , grids[i+1][j].position.y, grids[i+1][j].position.z);
+                            glVertex3f(grids[i+1][j+1].position.x , grids[i+1][j+1].position.y, grids[i+1][j+1].position.z);
+                            glVertex3f(grids[i][j+1].position.x , grids[i][j+1].position.y, grids[i][j+1].position.z);
+                        glEnd();
+                    }
+                }
+            break;
         }
     glPopMatrix();
 }
