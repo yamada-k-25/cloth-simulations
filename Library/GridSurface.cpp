@@ -7,6 +7,47 @@
 #include <cmath>
 using namespace std;
 
+// TODO: ここは後で、別のファイルに切り離した方が良いかもしれない
+const int imageHeight = 8;
+const int imageWidth = 8;
+unsigned char image[imageHeight][imageWidth][4];
+unsigned char bitmap1[imageHeight][imageWidth]=
+{
+	{0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00},
+	{0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00},
+	{0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00},
+	{0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff}
+};
+
+void makeImage(void)
+{
+	int i,j;
+	for (i = 0; i < imageHeight; i++) {
+   		for (j = 0; j < imageWidth; j++) {
+			image[i][j][0] = (unsigned char) bitmap1[i][j];
+        	image[i][j][1] = (unsigned char) bitmap1[i][j];
+			image[i][j][2] = (unsigned char) bitmap1[i][j];
+        	image[i][j][3] = (unsigned char) 255 - bitmap1[i][j];
+     	}
+	}
+}
+
+void InitTexture(void) {
+    makeImage();
+    // アライメントを設定する
+    // 最適にメモリアクセスができるようにするために、メモリのアライメントを設定する
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, imageWidth, imageHeight,
+                0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+}
+
 GridSurface::GridSurface(float originX, float originY, float originH, int divideNum, float rest, StringType stringType = StringType::none) {
     this->x = originX;
     this->y = originY;
@@ -26,6 +67,7 @@ GridSurface::GridSurface(float originX, float originY, float originH, int divide
 
 void GridSurface::Initialize() {
     // initialize grids
+    InitTexture();
     InitializeGrids();
     InitializeClothConstraints(rest);
 }
@@ -108,6 +150,45 @@ void GridSurface::Draw(int drawingType) {
                             glVertex3f(grids[i][j].position.x , grids[i][j].position.y, grids[i][j].position.z);
                             glVertex3f(grids[i+1][j].position.x , grids[i+1][j].position.y, grids[i+1][j].position.z);
                             glVertex3f(grids[i+1][j+1].position.x , grids[i+1][j+1].position.y, grids[i+1][j+1].position.z);
+                            glVertex3f(grids[i][j+1].position.x , grids[i][j+1].position.y, grids[i][j+1].position.z);
+                        glEnd();
+                    }
+                }
+            break;
+
+            case 5: // Grid Surfafe with Texture 
+                for(int i = 0; i < d; ++i) {
+                    for(int j = 0; j < d; ++j) {
+                        glEnable(GL_BLEND);
+                        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+                        glEnable(GL_TEXTURE_2D);
+                        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                        glColor4f(0,0.5,0, 0.5);
+                        glBegin(GL_QUADS);
+                            glTexCoord3f(
+                                (grids[i][j].position.x - grids[0][0].position.x) / (grids[d][d].position.x - grids[0][0].position.x), 
+                                (grids[i][j].position.y - grids[0][0].position.y) / (grids[d][d].position.y - grids[0][0].position.y),
+                                (grids[i][j].position.z - grids[0][0].position.z) / (grids[d][d].position.z - grids[0][0].position.z) 
+                            ); 
+                            glVertex3f(grids[i][j].position.x , grids[i][j].position.y, grids[i][j].position.z);
+                            glTexCoord3f(
+                                (grids[i+1][j].position.x - grids[0][0].position.x) / (grids[d][d].position.x - grids[0][0].position.x), 
+                                (grids[i+1][j].position.y - grids[0][0].position.y) / (grids[d][d].position.y - grids[0][0].position.y),
+                                (grids[i+1][j].position.z - grids[0][0].position.z) / (grids[d][d].position.z - grids[0][0].position.z) 
+                            ); 
+                            glVertex3f(grids[i+1][j].position.x , grids[i+1][j].position.y, grids[i+1][j].position.z);
+                            glTexCoord3f(
+                                (grids[i+1][j+1].position.x - grids[0][0].position.x) / (grids[d][d].position.x - grids[0][0].position.x), 
+                                (grids[i+1][j+1].position.y - grids[0][0].position.y) / (grids[d][d].position.y - grids[0][0].position.y),
+                                (grids[i+1][j+1].position.z - grids[0][0].position.z) / (grids[d][d].position.z - grids[0][0].position.z) 
+                            ); 
+                            glVertex3f(grids[i+1][j+1].position.x , grids[i+1][j+1].position.y, grids[i+1][j+1].position.z);
+                            glTexCoord3f(
+                                (grids[i][j+1].position.x - grids[0][0].position.x) / (grids[d][d].position.x - grids[0][0].position.x), 
+                                (grids[i][j+1].position.y - grids[0][0].position.y) / (grids[d][d].position.y - grids[0][0].position.y),
+                                (grids[i][j+1].position.z - grids[0][0].position.z) / (grids[d][d].position.z - grids[0][0].position.z) 
+                            ); 
                             glVertex3f(grids[i][j+1].position.x , grids[i][j+1].position.y, grids[i][j+1].position.z);
                         glEnd();
                     }

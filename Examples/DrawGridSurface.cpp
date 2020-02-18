@@ -34,7 +34,7 @@ void display(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     // DrawGroundGrid(10, 1, 1, D1);
     // printf("%d, %d, %d, %d", gridSurface.GetX(), gridSurface.GetY(), gridSurface.GetH(), gridSurface.DivideNum());
-    gridSurface.Draw(4);
+    gridSurface.Draw(5);
 
     glutSwapBuffers();
 }
