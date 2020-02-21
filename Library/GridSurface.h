@@ -23,6 +23,13 @@ private: // このクラス内でのみ参照できる
     float deltaX; // interval of division x
     float deltaY; // interval of division y
     float counter = 0;
+
+    float red;
+    float green;
+    float blue;
+    float alpha;
+    bool isColor = false;
+
     Grids grids; // Gridを２次元配列的な感じで表現する
     ClothConstraints constraints; // definite constraints between point to point.
 
@@ -52,6 +59,15 @@ public:
 
     void SetGridIsFixed(int h, int w, bool isFixed) {
         grids[h][w].isFixed = isFixed;
+    }
+
+    // range of 0, 255
+    void SetColor4f(float red, float green, float blue, float alpha) {
+        this->red = red;
+        this->green = green;
+        this->blue = blue;
+        this->alpha = alpha;
+        this->isColor = true;
     }
 
     void Draw(int drawingType);

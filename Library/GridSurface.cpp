@@ -7,6 +7,8 @@
 #include <cmath>
 using namespace std;
 
+int counter = 0;
+
 // TODO: ここは後で、別のファイルに切り離した方が良いかもしれない
 const int imageHeight = 8;
 const int imageWidth = 8;
@@ -23,15 +25,27 @@ unsigned char bitmap1[imageHeight][imageWidth]=
 	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff}
 };
 
+unsigned char line_bitmap[imageHeight][imageWidth]=
+{
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff},
+	{0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff}
+};
+
 void makeImage(void)
 {
 	int i,j;
 	for (i = 0; i < imageHeight; i++) {
    		for (j = 0; j < imageWidth; j++) {
-			image[i][j][0] = (unsigned char) bitmap1[i][j];
-        	image[i][j][1] = (unsigned char) bitmap1[i][j];
-			image[i][j][2] = (unsigned char) bitmap1[i][j];
-        	image[i][j][3] = (unsigned char) 255 - bitmap1[i][j];
+			image[i][j][0] = (unsigned char) line_bitmap[i][j];
+        	image[i][j][1] = (unsigned char) line_bitmap[i][j];
+			image[i][j][2] = (unsigned char) line_bitmap[i][j];
+        	image[i][j][3] = (unsigned char) 255 - line_bitmap[i][j];
      	}
 	}
 }
@@ -164,8 +178,9 @@ void GridSurface::Draw(int drawingType) {
                         glEnable(GL_TEXTURE_2D);
                         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-                        glColor4f(0,0.5,0, 0.5);
+                        glColor4f(0.9,0.3,0.0, 0.5);
                         glBegin(GL_QUADS);
+                        int d = 6;
                             glTexCoord3f(
                                 (grids[i][j].position.x - grids[0][0].position.x) / (grids[d][d].position.x - grids[0][0].position.x), 
                                 (grids[i][j].position.y - grids[0][0].position.y) / (grids[d][d].position.y - grids[0][0].position.y),
@@ -191,6 +206,63 @@ void GridSurface::Draw(int drawingType) {
                             ); 
                             glVertex3f(grids[i][j+1].position.x , grids[i][j+1].position.y, grids[i][j+1].position.z);
                         glEnd();
+                        // glBegin(GL_QUADS);
+                        //     glTexCoord3f(
+                        //         (grids[i][j].position.x - grids[0][0].position.x) / (grids[d][d].position.x - grids[0][0].position.x), 
+                        //         (grids[i][j].position.y - grids[0][0].position.y) / (grids[d][d].position.y - grids[0][0].position.y),
+                        //         (grids[i][j].position.z - grids[0][0].position.z) / (grids[d][d].position.z - grids[0][0].position.z) 
+                        //     ); 
+                        //     glVertex3f(grids[i][j].position.x , grids[i][j].position.y, grids[i][j].position.z);
+                        //     glTexCoord3f(
+                        //         (grids[i+1][j].position.x - grids[0][0].position.x) / (grids[d][d].position.x - grids[0][0].position.x), 
+                        //         (grids[i+1][j].position.y - grids[0][0].position.y) / (grids[d][d].position.y - grids[0][0].position.y),
+                        //         (grids[i+1][j].position.z - grids[0][0].position.z) / (grids[d][d].position.z - grids[0][0].position.z) 
+                        //     ); 
+                        //     glVertex3f(grids[i+1][j].position.x , grids[i+1][j].position.y, grids[i+1][j].position.z);
+                        //     glTexCoord3f(
+                        //         (grids[i+1][j+1].position.x - grids[0][0].position.x) / (grids[d][d].position.x - grids[0][0].position.x), 
+                        //         (grids[i+1][j+1].position.y - grids[0][0].position.y) / (grids[d][d].position.y - grids[0][0].position.y),
+                        //         (grids[i+1][j+1].position.z - grids[0][0].position.z) / (grids[d][d].position.z - grids[0][0].position.z) 
+                        //     ); 
+                        //     glVertex3f(grids[i+1][j+1].position.x , grids[i+1][j+1].position.y, grids[i+1][j+1].position.z);
+                        //     glTexCoord3f(
+                        //         (grids[i][j+1].position.x - grids[0][0].position.x) / (grids[d][d].position.x - grids[0][0].position.x), 
+                        //         (grids[i][j+1].position.y - grids[0][0].position.y) / (grids[d][d].position.y - grids[0][0].position.y),
+                        //         (grids[i][j+1].position.z - grids[0][0].position.z) / (grids[d][d].position.z - grids[0][0].position.z) 
+                        //     ); 
+                        //     glVertex3f(grids[i][j+1].position.x , grids[i][j+1].position.y, grids[i][j+1].position.z);
+                        // glEnd();
+                    }
+                }
+            break;
+
+            case 6: // Grid Surfafe with Texture 
+                for(int i = 0; i < d; ++i) {
+                    for(int j = 0; j < d; ++j) {
+                        glEnable(GL_BLEND);
+                        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                        // jが偶数なら透明にする
+                        if(j % 2 == 0) {
+                            // TODO: 全体の色にできるように設定されるようにする
+                            if(this->isColor) {
+                                glColor4f(this->red, this->green, this->blue, this->alpha);
+                            }else {
+                                glColor4f(0.2,0.2,0.2, 1.0); 
+                            }
+                        }else {
+                            if(this->isColor) {
+                                glColor4f(1.0, 1.0, 1.0, 1.0);
+                            }else {
+                                glColor4f(0.2,0.2,0.2, 0.0); 
+                            }
+                        }
+                        glBegin(GL_QUADS);
+                        int d = 6;
+                            glVertex3f(grids[i][j].position.x , grids[i][j].position.y, grids[i][j].position.z);
+                            glVertex3f(grids[i+1][j].position.x , grids[i+1][j].position.y, grids[i+1][j].position.z);
+                            glVertex3f(grids[i+1][j+1].position.x , grids[i+1][j+1].position.y, grids[i+1][j+1].position.z);
+                            glVertex3f(grids[i][j+1].position.x , grids[i][j+1].position.y, grids[i][j+1].position.z);
+                        glEnd();
                     }
                 }
             break;
@@ -213,13 +285,14 @@ void GridSurface::Update() {
     // 風
     float r1 = counter / 70.0;
     float r2 = counter / 25.0;
-    Asura::vector3d windowForce(0.0001f, 0.0001f, 0.0005f);
+    // Asura::vector3d windowForce(0.0001f, 0.0001f, 0.0005f);
+    Asura::vector3d windowForce(0.0001f, 0.000001f, 0.00003f);
     for(int i = 0; i <= d; ++i) {
         for(int j = 0; j <=d; ++j) {
             if(!grids[i][j].isFixed) grids[i][j].force += windowForce * (sin(r1) * sin(r2)*0.5 + 1.0);
         }
     }
-
+    counter++;
     //
     UpdateSpringForces();
 
@@ -229,6 +302,8 @@ void GridSurface::Update() {
             grids[i][j].velocity = grids[i][j].force / grids[i][j].mass;
         }
     }
+
+    TestUpdate();
 
     // 空気抵抗は最後に計算する
     // 空気抵抗
@@ -369,11 +444,12 @@ void GridSurface::EularMethod() {
 }
 
 void GridSurface::TestUpdate() {
-    // X方向に点が伸びるように実装してみる
+    // X方向に移動するようにする
     float deltaX = this->deltaX/30;
+    int direction = int(counter / 400) * -1;
     for(int i=0; i<=d; ++i) {
         for(int j=0; j<=d; ++j) {
-            grids[i][j].position.x += deltaX;
+            grids[i][j].position.x += deltaX * direction;
         }
     }
 }
