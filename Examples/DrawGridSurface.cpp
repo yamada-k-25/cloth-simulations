@@ -206,6 +206,11 @@ int main(int argc, char** argv) {
     myInit(argv[0]);
 	glutReshapeFunc (reshape);
     glutDisplayFunc(display);
+
+    cout << "Vendor :"<<glGetString(GL_VENDOR)<<'\n';
+    cout << "GPU : "<<glGetString(GL_RENDERER) <<'\n';
+    cout << "OpenGL ver. " <<glGetString(GL_VERSION)<<'\n';
+
 	glutMotionFunc( motion );
 	glutMouseFunc(mouse);
     glutIdleFunc(idle);
