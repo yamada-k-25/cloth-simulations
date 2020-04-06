@@ -28,13 +28,21 @@ private: // このクラス内でのみ参照できる
     float green;
     float blue;
     float alpha;
+    // Texture Property
+    string filePath="";
+    int texNum = 1;
+
     bool isColor = false;
 
     Grids grids; // Gridを２次元配列的な感じで表現する
+    Grids preGrids;
+    Grids nextGrids;
     ClothConstraints constraints; // definite constraints between point to point.
 
 public:
-    GridSurface(float originX, float originY, float originH, int divideNum, float rest, StringType stringType);
+    GridSurface(float originX, float originY, float originH, int divideNum, float width, float height, float rest, StringType stringType);
+    // TODO: ここで引数なしのコンストラクタを許すとどんな弊害が起きるのかわからん...
+    GridSurface();
     int DivideNum() {
         return this->d;
     }
@@ -70,6 +78,16 @@ public:
         this->isColor = true;
     }
 
+    void SetTexture(string filePath, int texNum){
+        this->filePath = filePath;
+        this->texNum = texNum;
+    }
+
+    // TODO: 実はこれを公開関数として定義するのは間違っている？
+    // ======= Force Methods ========
+    /// 与えられた点に対して力を一定の方向に加える
+    void  PullGridSurface(Asura::vector3d force, int col, int row);
+
     void Draw(int drawingType);
     void Update();
     void Initialize();
@@ -81,6 +99,7 @@ protected: // 継承クラスからの参照を許可する
     // Initializer
     void InitializeGrids();
     void InitializeClothConstraints(float rest);
+    void InitTexture();
 
     void EularMethod();
     void TestUpdate(); // Animationができるか確認するために, 点を動かすをx軸方向に動かす
@@ -95,7 +114,9 @@ protected: // 継承クラスからの参照を許可する
     void UpdateStreach();
     void UpdateBending();
     void UpdateGravityForce();
+    
     // void UpdateWind();
+
 };
 
 #endif
